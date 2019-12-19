@@ -3,11 +3,15 @@
 import idaapi, idc, plistlib
 import os, inspect
 
+LINE_COLOR = 0xE3BEDD
+FILE_COLOR = 0x00FF00
+
+
 def decodehash(hash):
 	cur_file = inspect.getsourcefile(lambda: 0)			# https://github.com/NeatMonster/AMIE
 	cur_path = os.path.dirname(os.path.abspath(cur_file))
 	list = "hash.plist"
-	pl=plistlib.readPlist(os.path.join(cur_path, list))
+	pl = plistlib.readPlist(os.path.join(cur_path, list))
 	try:
 		file = pl[hash]
 		return file
@@ -24,7 +28,7 @@ def dostuff():
 		ln = idc.GetOpnd(adr, 1)[1:]
 		if ins == "MOV" and idc.GetOpnd(adr, 0) == "W8" and int(ln, 16) < 0xFFF and int(ln, 16) > 0xA and "AA" not in ln:
 																				#there are comments at top rite?	#-ftrivial-auto-var-init=pattern
-			SetColor(adr, CIC_ITEM, 0xE3BEDD)
+			SetColor(adr, CIC_ITEM, LINE_COLOR)
 
 		if ins == "MOVE":
 			hash = (idc.GetOpnd(adr, 1)[1:])
@@ -33,7 +37,7 @@ def dostuff():
 					if file != -1:
 						isn = "WMSA            "+file
 						set_manual_insn(adr, isn)
-						SetColor(adr, CIC_ITEM, 0x00FF00)
+						SetColor(adr, CIC_ITEM, FILE_COLOR)
 						count+=1
 		adr+=4
 
